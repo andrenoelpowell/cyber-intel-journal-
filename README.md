@@ -1,2 +1,5 @@
-# cyber-intel-journal-
-This repository is a weekly cyber intelligence and defensive design journal
+![MITRE ATT&CK Aligned](https://img.shields.io/badge/MITRE-ATT%26CK-blue)
+![Threat Informed Defense](https://img.shields.io/badge/Threat-Informed%20Defense-critical)
+![Weekly Analysis](https://img.shields.io/badge/Update-Cadence%3A%20Weekly-brightgreen)
+![Focus-Enterprise%20%7C%20Mission%20Systems](https://img.shields.io/badge/Focus-Enterprise%20%7C%20Mission%20Systems-informational)
+![Defensive Analysis Only](https://img.shields.io/badge/Purpose-Defensive%20Analysis%20Only-success)
