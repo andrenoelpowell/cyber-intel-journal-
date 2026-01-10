@@ -1,0 +1,169 @@
+# Weekly Cyber Intelligence & Defensive Design Review
+
+**Week of:** 2026-01-10  
+**Author:** Andre Powell  
+**Focus Environment:** Enterprise | Mission / Isolated | Hybrid
+
+---
+
+## 1. High-Impact Incident Selection
+
+**Incident Name:**  
+CISA KEV – HPE OneView Unauthenticated Remote Code Execution (CVE-2025-37164)
+
+**Category:**  
+Edge Device / Infrastructure Management
+
+**Why This Matters (1–2 sentences):**  
+CISA added CVE-2025-37164 affecting HPE OneView to the Known Exploited Vulnerabilities (KEV) catalog, confirming active exploitation in the wild. Because OneView operates with high-privilege control over enterprise infrastructure, unauthenticated RCE at this layer presents a large blast radius and a rapid path to full environment compromise.
+
+---
+
+## 2. Incident Decomposition
+
+**Summary (max 3 sentences):**  
+CVE-2025-37164 is an unauthenticated code injection vulnerability in HPE OneView that allows remote attackers to execute arbitrary code. The flaw is actively exploited and requires no prior authentication, making exposed management interfaces especially high risk. Compromise of OneView can enable downstream control of managed compute, storage, and network resources.
+
+**Initial Access:**  
+Exploitation of a public-facing OneView management interface via unauthenticated code injection.
+
+**Propagation / Lateral Movement:**  
+Abuse of OneView’s administrative control plane to access managed servers, deploy payloads, harvest credentials, or pivot into connected enterprise networks.
+
+**Impact:**  
+Loss of integrity and availability of managed infrastructure, potential full environment takeover, service disruption, and follow-on ransomware or destructive actions.
+
+---
+
+## 3. MITRE ATT&CK Technique Mapping (Spine Only)
+
+*Focus on the core techniques that enabled the incident. Avoid over-mapping.*
+
+| ATT&CK Tactic | Technique ID | Technique Name | Purpose |
+|---------------|-------------|----------------|---------|
+| Initial Access | T1190 | Exploit Public-Facing Application | Achieve unauthenticated access via exposed OneView interface |
+| Execution | T1059 | Command and Scripting Interpreter | Execute attacker-supplied commands on the OneView host |
+| Impact | T1489 | Service Stop | Disrupt managed infrastructure or management services |
+
+---
+
+## 4. Control Analysis (Prevent / Detect / Contain / Recover)
+
+| Technique | Prevent | Detect | Contain | Recover |
+|----------|--------|--------|---------|---------|
+| T1190 | Patch OneView promptly; restrict interface exposure | Web/API access logs; abnormal request patterns | Isolate management plane | Rebuild OneView appliance |
+| T1059 | Application hardening; least privilege | Process creation and command-line logging | Kill processes; revoke creds | Restore from trusted image |
+| T1489 | Change control protections | Service stop alerts | Failover where possible | Re-deploy services |
+
+---
+
+## 5. Derived Design Requirements
+
+### DR-1
+**The system SHALL:**  
+Restrict infrastructure management interfaces (e.g., HPE OneView) to dedicated management networks not reachable from untrusted or user-accessible segments.
+
+**Rationale:**  
+Unauthenticated RCE in management planes creates a disproportionate blast radius when exposed beyond tightly controlled networks.
+
+**Verification Method:**  
+Network architecture review and firewall rule validation; access attempts from non-management segments must fail.
+
+### DR-2 (Optional)
+**The system SHALL:**  
+Generate high-priority alerts on anomalous process execution originating from infrastructure management platforms.
+
+**Rationale:**  
+Post-exploitation activity on management systems is rare in normal operations and provides high-confidence detection signal.
+
+**Verification Method:**  
+Process execution simulation during tabletop or adversary emulation.
+
+---
+
+## 6. Environment Gap Assessment
+
+| Control Area | Status | Notes |
+|--------------|--------|-------|
+| Patch discipline | Risk | Management platforms often lag patch cycles |
+| Segmentation | Risk | Management planes frequently overexposed |
+| Update provenance | Unknown | Depends on vendor update workflows |
+| Credential hygiene | Risk | High-privilege credentials likely present |
+| Detection speed | Unknown | Varies by management host visibility |
+
+---
+
+## 7. Leadership Takeaway (One Sentence)
+
+**This week’s most important defensive lesson:**  
+Infrastructure management platforms are high-value attack surfaces and must be treated as mission-critical control planes with strict exposure, patching, and monitoring requirements.
+
+---
+
+## 8. Carry-Forward Items
+
+- Patch advisory to monitor: HPE OneView updates for CVE-2025-37164  
+- Exploit or technique to watch: Unauthenticated RCE against management interfaces  
+- Control gap to revisit: Management network segmentation  
+- Architecture assumption to validate: “Management tools are trusted by default”
+
+---
+
+# Appendix A — Telemetry Sources & ATT&CK Data Component (DC) Mapping
+
+**Incident:** CISA KEV – HPE OneView Unauthenticated RCE (CVE-2025-37164)  
+**Platform Focus:** HPE OneView (Infrastructure Management Plane)
+
+---
+
+## A.1 Telemetry Source Inventory
+
+| Telemetry Source | Native / Non-Native | Notes |
+|------------------|---------------------|------|
+| OneView application logs | Native | API calls, errors, task execution |
+| OneView web access logs | Native | HTTP requests, parameters, response codes |
+| OneView OS process logs | Native | Depends on OS logging configuration |
+| Authentication logs | Native | Success/failure, token usage |
+| Network flow logs (mgmt segment) | Non-Native | Firewall, NetFlow, NSM |
+| EDR telemetry (if deployed) | Non-Native | Process lineage, command-line |
+
+---
+
+## A.2 ATT&CK Technique → Data Component Mapping
+
+| ATT&CK Technique | Data Component | Example Telemetry | Detection Value |
+|------------------|---------------|-------------------|-----------------|
+| T1190 | Network Traffic | Abnormal POST requests to OneView APIs | Identify exploit attempts |
+| T1190 | Application Log | Malformed input or parsing errors | Early exploit indicators |
+| T1059 | Process Creation | Unexpected shell spawned by OneView service | Strong post-exploitation signal |
+| T1059 | Command-Line | Encoded or obfuscated commands | Distinguish admin vs abuse |
+| T1489 | Service State | Unexpected service stop/restart | Impact confirmation |
+
+---
+
+## A.3 Visibility Gaps Highlighted
+
+| Visibility Area | Risk | Explanation |
+|-----------------|------|-------------|
+| Application-layer logging | Medium | Often enabled but under-monitored |
+| Process telemetry on mgmt systems | High | Management tools assumed trusted |
+| Network visibility into mgmt plane | High | Exploitation invisible without NSM |
+| Auth telemetry correlation | Medium | Needed to confirm unauth access |
+
+---
+
+## A.4 Detection Priorities
+
+**Highest Signal:**
+- Process creation originating from OneView services  
+- Outbound connections from OneView to non-management segments  
+
+**Secondary Signal:**
+- Abnormal API request volume or methods  
+- Service restarts outside maintenance windows  
+
+---
+
+## A.5 Design Insight
+
+Management planes are telemetry producers, not just control tools. Treating them as first-class log sources enables earlier detection of infrastructure-level compromise where blast radius is greatest.
