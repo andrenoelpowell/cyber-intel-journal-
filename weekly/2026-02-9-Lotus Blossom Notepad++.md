@@ -1,6 +1,6 @@
 # Weekly Cyber Intelligence & Defensive Design Review
 
-**Week of:** 2026-02-03  
+**Week of:** 2026-02-09  
 **Author:** Andre Powell  
 **Focus Environment:** Enterprise | Mission / Isolated | Supply Chain  
 **Primary Lens:** Threat-Informed Defense (ATT&CK → Telemetry → Control Design)
@@ -20,8 +20,8 @@ This campaign demonstrates the evolution of a long-running APT blending supply-c
 
 ## 2. Incident Decomposition
 
-### Summary (≤3 sentences)
-:contentReference[oaicite:0]{index=0} identified a sophisticated intrusion in which Lotus Blossom abused Notepad++ update infrastructure to deliver a previously undocumented backdoor dubbed *Chrysalis*. The campaign uses DLL sideloading, layered shellcode loaders, reflective code loading, and Warbird-based execution via undocumented `NtQuerySystemInformation` functionality. The intrusion chain mixes custom malware with Metasploit and Cobalt Strike to maintain flexibility and resilience.
+### Summary
+Identified a sophisticated intrusion in which Lotus Blossom abused Notepad++ update infrastructure to deliver a previously undocumented backdoor dubbed *Chrysalis*. The campaign uses DLL sideloading, layered shellcode loaders, reflective code loading, and Warbird-based execution via undocumented `NtQuerySystemInformation` functionality. The intrusion chain mixes custom malware with Metasploit and Cobalt Strike to maintain flexibility and resilience.
 
 ### Initial Access
 - Abuse of Notepad++ updater execution chain  
