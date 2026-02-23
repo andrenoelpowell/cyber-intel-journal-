@@ -17,7 +17,7 @@ A financially motivated Russian-speaking actor used commercial generative AI too
 
 ## 2. Incident Decomposition
 
-### Summary (≤3 sentences)
+### Summary
 
 Between mid-January and mid-February 2026, a threat actor leveraged AI-generated attack planning and automation to mass-scan for exposed FortiGate administrative interfaces. Devices with weak authentication and internet-facing management access were compromised. Stolen configuration data enabled lateral movement into internal networks and in some cases access to Active Directory and backup systems.
 
